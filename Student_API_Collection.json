@@ -1,0 +1,419 @@
+{
+	"info": {
+		"_postman_id": "a9e5b1b4-d3a3-4b6e-a2e1-c8a7f1a3e6b2",
+		"name": "SEDS CUSAT Student Management API",
+		"description": "The complete API collection for the SEDS CUSAT Student Management system, featuring Google OAuth, role-based access, QR codes, and automated emailing.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication (Google OAuth)",
+			"description": "Endpoints for user authentication via Google. These URLs should be opened in a browser to start the login flow.",
+			"item": [
+				{
+					"name": "STUDENT: Login with Google",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/auth/google",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"auth",
+								"google"
+							]
+						},
+						"description": "STEP 1: Open this URL in your web browser.\n\nThis will redirect you to Google to sign in. After a successful sign-in, Google will redirect back to the server's callback URL. The server will then process the login/registration and issue a JWT token, which you would normally get from the callback response in a real application."
+					},
+					"response": []
+				},
+				{
+					"name": "ADMIN: Login with Google",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/auth/google",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"google"
+							]
+						},
+						"description": "STEP 1: Open this URL in your web browser.\n\nThis will redirect you to Google to sign in. After a successful sign-in, Google will redirect back to the server's callback URL. The server will then process the login/registration and issue a JWT token for the admin."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Student Routes (Protected)",
+			"description": "Endpoints accessible only by a logged-in student.",
+			"item": [
+				{
+					"name": "Get My Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{student_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"me"
+							]
+						},
+						"description": "Retrieves the profile information of the currently authenticated student. Requires a student JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Update My Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{student_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"team\": \"Team Cosmos\",\n    \"phoneNumber\": \"9876543210\",\n    \"department\": \"Information Technology\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"me"
+							]
+						},
+						"description": "Updates the profile information for the authenticated student. Send only the fields you wish to change. Requires a student JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My QR Code",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{student_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/me/qrcode",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"me",
+								"qrcode"
+							]
+						},
+						"description": "Generates and returns a unique QR code (as a Data URL) for the authenticated student. Requires a student JWT."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Routes (Protected)",
+			"description": "Endpoints accessible only by an authenticated admin for managing students.",
+			"item": [
+				{
+					"name": "Get All Students",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						},
+						"description": "Retrieves a list of all registered student records. Requires an admin JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}"
+							]
+						},
+						"description": "Retrieves the profile of a single student by their unique MongoDB ID. Requires an admin JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"department\": \"Computer Science\",\n    \"team\": \"Team Nebula\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}"
+							]
+						},
+						"description": "Updates the profile of a specific student by their MongoDB ID. Requires an admin JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Student By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}"
+							]
+						},
+						"description": "Deletes a student record permanently from the database by their MongoDB ID. Requires an admin JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Student by QR Code",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uniqueId\": \"<paste_uuid_from_scanned_qr_code>\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/verify",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"verify"
+							]
+						},
+						"description": "Verifies if a `uniqueId` (read from a QR code) is valid and returns the corresponding student's details. Requires an admin JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student QR Code By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}/qrcode",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}",
+								"qrcode"
+							]
+						},
+						"description": "Generates a QR code for a specific student using their MongoDB ID. Requires an admin JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Send ID Card to Student",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}/send-id-card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}",
+								"send-id-card"
+							]
+						},
+						"description": "Generates a student's ID card and sends it to their registered email address. This is an action endpoint and has no body. Requires an admin JWT."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000"
+		},
+		{
+			"key": "student_id",
+			"value": "",
+			"description": "Set this to the MongoDB _id of a student you want to query as an admin."
+		},
+		{
+			"key": "student_token",
+			"value": "",
+			"description": "Paste the JWT token for a STUDENT here after logging in."
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"description": "Paste the JWT token for an ADMIN here after logging in."
+		}
+	]
+}
